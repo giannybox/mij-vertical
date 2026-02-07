@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MijVertical - Raport Detaliat</title>
+    <style>
+        :root {
+            --bg-dark: #0b0d14;
+            --card-bg: #161a25;
+            --primary-blue: #0066ff;
+            --accent-yellow: #f5c518;
+            --danger: #ff4d4d;
+            --success: #00d084;
+            --text-gray: #8e9297;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 550px;
+            margin-top: 50px;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 30px;
+            text-transform: lowercase;
+        }
+
+        .logo span { color: var(--primary-blue); }
+
+        /* Card Căutare */
+        .search-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            text-align: center;
+            border: 1px solid #252a3a;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px;
+            background: #0b0d14;
+            border: 2px solid #252a3a;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--primary-blue); }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover { background: #0052cc; }
+
+        /* Loading */
+        #loading {
+            display: none;
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #252a3a;
+            border-top: 5px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Raport Detaliat */
+        #report {
+            display: none;
+            margin-top: 30px;
+            animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .report-header {
+            background: var(--primary-blue);
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .report-body {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 0 0 15px 15px;
+            border: 1px solid #252a3a;
+        }
+
+        .section-title {
+            color: var(--text-gray);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+            border-bottom: 1px solid #252a3a;
+            padding-bottom: 5px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            font-size: 1rem;
+        }
+
+        .val { font-weight: 600; color: var(--accent-yellow); }
+        .red-flag { color: var(--danger); font-weight: 800; }
+        .green-flag { color: var(--success); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="logo">mij<span>vertical</span></div>
+
+    <div class="search-card" id="searchCard">
+        <h2 style="margin-top:0">Verifică istoricul</h2>
+        <p style="color: var(--text-gray); margin-bottom: 25px;">Introdu numele complet pentru a accesa baza de date.</p>
+        <input type="text" id="targetName" placeholder="Numele fetei...">
+        <button onclick="startScanning()">GENEREAZĂ RAPORT PDF</button>
+    </div>
+
+    <div id="loading">
+        <div class="spinner"></div>
+        <p id="loadingText">Se caută în arhivele Instagram...</p>
+    </div>
+
+    <div id="report">
+        <div class="report-header">
+            <span>RAPORT GENERAT CU SUCCES</span>
+            <span id="vinCode">#MIJ-88231</span>
+        </div>
+        <div class="report-body">
+            <h1 id="resName" style="margin: 0 0 10px 0;">---</h1>
+            
+            <div class="section-title">Date Generale</div>
+            <div class="info-row">
+                <span>Kilometraj (Foste relații)</span>
+                <span class="val" id="resKm">--</span>
+            </div>
+            <div class="info-row">
+                <span>Accidente (Drame publice)</span>
+                <span class="val" id="resAccidents">--</span>
+            </div>
+
+            <div class="section-title">Analiza Tehnică</div>
+            <div class="info-row">
+                <span>Consum (Mood swings)</span>
+                <span class="val">Ridicat (15L/h plâns)</span>
+            </div>
+            <div class="info-row">
+                <span>Istoric Revizii (Psiholog)</span>
+                <span class="val" id="resPsych">Niciuna</span>
+            </div>
+            <div class="info-row">
+                <span>Țara de Origine</span>
+                <span class="val">România (Berceni)</span>
+            </div>
+
+            <div class="section-title">Verdict Final</div>
+            <div class="info-row">
+                <span>Stare generală:</span>
+                <span id="resVerdict">---</span>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255, 204, 0, 0.1); border-radius: 8px; border: 1px solid var(--accent-yellow);">
+                <small style="color: var(--accent-yellow);"><strong>NOTĂ:</strong> Raportul indică un risc ridicat de "seen" după ora 22:00. Se recomandă prudență la manevrele de ghosting.</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function startScanning() {
+        const name = document.getElementById('targetName').value;
+        if (!name) return alert("Introdu un nume!");
+
+        const searchCard = document.getElementById('searchCard');
+        const loading = document.getElementById('loading');
+        const loadingText = document.getElementById('loadingText');
+        const report = document.getElementById('report');
+
+        searchCard.style.display = 'none';
+        loading.style.display = 'block';
+        report.style.display = 'none';
+
+        // Fake loading messages
+        const messages = [
+            "Se accesează baza de date MAI...",
+            "Se verifică story-urile din arhiva Close Friends...",
+            "Analizăm numărul de urmăritori pe TikTok...",
+            "Calculăm rata de toxicitate..."
+        ];
+
+        let i = 0;
+        const interval = setInterval(() => {
+            if (i < messages.length) {
+                loadingText.innerText = messages[i];
+                i++;
+            }
+        }, 800);
+
+        // Afișare raport după 3.5 secunde
+        setTimeout(() => {
+            clearInterval(interval);
+            loading.style.display = 'none';
+            showReport(name);
+        }, 3500);
+    }
+
+    function showReport(name) {
+        const report = document.getElementById('report');
+        const km = Math.floor(Math.random() * 30) + 2;
+        const accidents = Math.floor(Math.random() * 5);
+        
+        document.getElementById('resName').innerText = name;
+        document.getElementById('resKm').innerText = km + " foști";
+        document.getElementById('resAccidents').innerText = accidents;
+        document.getElementById('vinCode').innerText = "#MIJ-" + Math.floor(Math.random() * 90000 + 10000);
+        
+        const psychOptions = ["O dată pe săptămână", "Refuză categoric", "Are nevoie urgentă", "Recent făcută"];
+        document.getElementById('resPsych').innerText = psychOptions[Math.floor(Math.random() * psychOptions.length)];
+
+        const verdict = document.getElementById('resVerdict');
+        if (accidents >= 3 || km > 20) {
+            verdict.innerHTML = '<span class="red-flag">DAUNĂ TOTALĂ (Fugi!)</span>';
+        } else if (accidents === 0) {
+            verdict.innerHTML = '<span class="green-flag">STARE DE COLECȚIE (Păstreaz-o)</span>';
+        } else {
+            verdict.innerHTML = '<span class="val">ACCEPTABILĂ (Merge de un suc)</span>';
+        }
+
+        report.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
